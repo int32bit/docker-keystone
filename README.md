@@ -21,11 +21,11 @@ docker run -d -e MYSQL_ROOT_PASSWORD=MYSQL_DBPASS -h mysql --name mysql -d maria
 Then we should link the database, create a new keystone instance as follow:
 ```
 docker run -d \
-  -e OS_TENANT_NAME=admin \
-  -e OS_USERNAME=admin \
-  -e OS_PASSWORD=ADMIN_PASS \
-  --link mysql:mysql \
-  --name keystone \ 
+  -e OS_TENANT_NAME=admin\
+  -e OS_USERNAME=admin\
+  -e OS_PASSWORD=ADMIN_PASS\
+  --link mysql:mysql\
+  --name keystone\ 
   -h keystone krystism/openstack-keystone
 ```
 It may takes some time to execute initscript, you just need to do is wait about 5s, you can use docker logs to fetch
