@@ -1,13 +1,14 @@
 #!/bin/bash
 set -x
-# create database for keystone
+
+# Create database
 export MYSQL_ROOT_PASSWORD=${MYSQL_ENV_MYSQL_ROOT_PASSWORD}
 export MYSQL_HOST=${MYSQL_HOST:-mysql}
 SQL_SCRIPT=/root/keystone.sql
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -h $MYSQL_HOST <$SQL_SCRIPT
 
 
-# init the arguments
+# Init the arguments
 ADMIN_TOKEN=${ADMIN_TOKEN:-ADMIN_TOKEN}
 ADMIN_TENANT_NAME=${OS_TENANT_NAME:-admin}
 ADMIN_USER_NAME=${OS_USERNAME:-admin}
@@ -17,7 +18,7 @@ OS_SERVICE_TOKEN=$ADMIN_TOKEN
 OS_SERVICE_ENDPOINT=${OS_AUTH_URL:-"http://${HOSTNAME}:35357/v2.0"}
 unset OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL
 
-# modify the config file
+# Adjust the configuration of the Keystone Service
 CONFIG_FILE=/etc/keystone/keystone.conf
 sed -i "s#^connection.*=.*#connection = mysql://keystone:KEYSTONE_DBPASS@${MYSQL_HOST}/keystone#" $CONFIG_FILE
 ADMIN_TOKEN=${ADMIN_TOKEN:-ADMIN_TOKEN}
@@ -26,7 +27,7 @@ su -s /bin/sh -c "keystone-manage db_sync" keystone
 
 keystone-all &
 
-# it may take some time to start keystone service, waiting for it.
+# It may take some time to start keystone service, waiting for it.
 sleep 5
 
 # keystone init
@@ -47,6 +48,7 @@ keystone endpoint-create \
 	--adminurl http://${KEYSTONE_HOST}:35357/v2.0 \
 	--region regionOne
 unset OS_SERVICE_TOKEN OS_SERVICE_ENDPOINT
+
 # FIXME I need restart
 pkill keystone-all
 set +x

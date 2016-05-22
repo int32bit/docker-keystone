@@ -1,39 +1,47 @@
-# How to build
+## Short Description
+
+Keystone is an OpenStack project that provides Identity, Token, Catalog and Policy services for use specifically by projects in the OpenStack family. 
+
+## How to build this image
+
 ```bash
-docker  build --rm -t="krystism/openstack-keystone" .
+docker  build --rm -t="openstack-keystone" .
 ```
 
-# Environment Variables
-you can pass these arguments using **docker run -e** to override default value.
-* MYSQL_ROOT_PASSWORD
-* OS_TENANT_NAME : default "admin"
-* OS_USER_NAME : default "admin"
-* OS_PASSWORD : default "ADMIN_PASS"
-* OS_ADMIN_EMAIL : default "admin@example.com"
+## How to use this image
 
-# Start a keystone instance
+Openstack Keystone Service uses an SQL database to store information. We use MariaDB or MySQL depending on the distribution. We recommend using Docker to deploy a Mysql/MariaDB server quickly as follows:
 
-Before start a keystone instance, we also need mysql database to store data. I use [mariadb](https://registry.hub.docker.com/_/mariadb/)
-instead, you can also use mysql image!
+```bash
+docker run -d -e MYSQL_ROOT_PASSWORD=MYSQL_DBPASS -h mysql --name some-mysql -d mariadb
 ```
-docker run -d -e MYSQL_ROOT_PASSWORD=MYSQL_DBPASS -h mysql --name mysql -d mariadb
+
+Then start your Openstack Keystone Service like this:
+
+```bash
+docker run --name some-keystone --link some-mysql:mysql -p 5000:5000 -p 35357:35357  -d openstack-keystone
 ```
-Then we should link the database, create a new keystone instance as follow:
-```
-docker run -d \
-  -e OS_TENANT_NAME=admin\
-  -e OS_USERNAME=admin\
-  -e OS_PASSWORD=ADMIN_PASS\
-  --link mysql:mysql\
-  --name keystone\ 
-  -h keystone krystism/openstack-keystone
-```
-It may takes some time to execute initscript, you just need to do is wait about 5s, you can use docker logs to fetch
-some info from the instance, once the work is done, you can check if it really works:
+
+The following environment variables are needed for configuring your Openstack Keystone Service:
+
+* `-e MYSQL\_ROOT\_PASSWORD=...`: Defaults to the value of the `MYSQL\_ROOT\_PASSWORD` environment variable from the linked mysql container.
+* `-e MYSQL\_HOST=...`: If you use an external database, specify the address of the database. Defautls to "mysql".
+
+It may takes seconds to do some initial work, you can use `docker logs` to detect the progress from the instance. Once the Openstck Keystone Service is started, you can check its work as follows:
+
 ```
 docker exec -t -i keystone bash
 cd /root
 source admin-openrc.sh
 keystone user-list
 ```
-Enjoy!
+
+## Environment Variables
+
+When you start this image, you can adjust the additional configuration of the Openstack Keystone Service by passing one or more environment variables on the docker run command line. 
+
+* `ADMIN\_TOKEN`: defaults to "ADMIN\_TOKEN"
+* `-e OS\_TENANT\_NAME=...`: Defaults to "admin".
+* `-e OS\_USER\_NAME=...`: Defaults to "admin".
+* `-e OS\_PASSWORD=...`: Defaults to "ADMIN\_PASS".
+* `-e OS\_ADMIN\_EMAIL=...`: Defaults to "admin@example.com".
