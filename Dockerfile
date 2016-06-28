@@ -1,9 +1,9 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER krystism "krystism@gmail.com"
 
 # Install packages
 RUN set -x \
-	&& echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/juno main" > /etc/apt/sources.list.d/juno.list \
+	&& echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main" > /etc/apt/sources.list.d/mitaka.list \
 	&& apt-get -y update \
 	&& apt-get -y install ubuntu-cloud-keyring \
 	&& apt-get -y update \
