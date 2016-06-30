@@ -1,24 +1,25 @@
-FROM ubuntu:14.04
+FROM python:2.7
 MAINTAINER krystism "krystism@gmail.com"
 
-# Install packages
+ENV VERSION=10.0.0.0b1
+
 RUN set -x \
-	&& echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/juno main" > /etc/apt/sources.list.d/juno.list \
-	&& apt-get -y update \
-	&& apt-get -y install ubuntu-cloud-keyring \
-	&& apt-get -y update \
-	&& apt-get -y install \
-		mysql-client \
-		keystone \
-		python-keystoneclient \
-		python-mysqldb \
-	&& apt-get -y clean \
-	&& rm -f /var/lib/keystone/keystone.db
+    && apt-get -y update \
+    && apt-get install -y libffi-dev python-dev libssl-dev \
+    && apt-get -y clean
 
-EXPOSE 5000 35357
+COPY pip.conf ~/.pip/pip.conf
 
-# Copy sql script
-COPY keystone.sql /root/keystone.sql
+RUN curl -fSL https://github.com/openstack/keystone/archive/${VERSION}.tar.gz -o keystone-${VERSION}.tar.gz \
+    && tar xvf keystone-${VERSION}.tar.gz \
+    && cd keystone-${VERSION} \
+    && pip install -r requirements.txt \
+    && PBR_VERSION=${VERSION}  pip install . \
+    && pip install uwsgi \
+    && cp -r etc /etc/keystone \
+    && pip install python-openstackclient \
+    && cd - \
+    && rm -rf keystone-${VERSION}*
 
 # Copy keystone config file
 COPY keystone.conf /etc/keystone/keystone.conf
@@ -26,4 +27,6 @@ COPY keystone.conf /etc/keystone/keystone.conf
 # Add bootstrap script and make it executable
 COPY bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod a+x /etc/bootstrap.sh
+
 ENTRYPOINT ["/etc/bootstrap.sh"]
+EXPOSE 5000 35357
