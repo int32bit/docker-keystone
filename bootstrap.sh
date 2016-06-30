@@ -12,11 +12,20 @@ OS_TOKEN=$ADMIN_TOKEN
 OS_URL=${OS_AUTH_URL:-"http://${HOSTNAME}:35357/v3"}
 OS_IDENTITY_API_VERSION=3
 
-#sed -i "s#^connection.*=.*#connection = mysql://keystone:KEYSTONE_DBPASS@${MYSQL_HOST}/keystone#" $CONFIG_FILE
+CONFIG_FILE=/etc/keystone/keystone.conf
+SQL_SCRIPT=${SQL_SCRIPT:-/root/keystone.sql}
+
+if env | grep -qi MYSQL && test -e $SQL_SCRIPT; then
+    MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$MYSQL_ENV_MYSQL_ROOT_PASSWORD}
+    MYSQL_HOST=${MYSQL_HOST:-mysql}
+    sed -i "s#^connection.*=.*#connection = mysql://keystone:KEYSTONE_DBPASS@${MYSQL_HOST}/keystone#" $CONFIG_FILE
+    mysql -uroot -p$MYSQL_ROOT_PASSWORD -h $MYSQL_HOST <$SQL_SCRIPT
+fi
+
+rm -f $SQL_SCRIPT
 
 # update keystone.conf
-CONFIG_FILE=/etc/keystone/keystone.conf
-#sed -i "s#^admin_token.*=.*#admin_token = $ADMIN_TOKEN#" $CONFIG_FILE
+sed -i "s#^admin_token.*=.*#admin_token = $ADMIN_TOKEN#" $CONFIG_FILE
 
 # Populate the Identity service database
 keystone-manage db_sync

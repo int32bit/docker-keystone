@@ -5,10 +5,8 @@ ENV VERSION=10.0.0.0b1
 
 RUN set -x \
     && apt-get -y update \
-    && apt-get install -y libffi-dev python-dev libssl-dev \
+    && apt-get install -y libffi-dev python-dev libssl-dev mysql-client python-mysqldb \
     && apt-get -y clean
-
-COPY pip.conf ~/.pip/pip.conf
 
 RUN curl -fSL https://github.com/openstack/keystone/archive/${VERSION}.tar.gz -o keystone-${VERSION}.tar.gz \
     && tar xvf keystone-${VERSION}.tar.gz \
@@ -21,8 +19,8 @@ RUN curl -fSL https://github.com/openstack/keystone/archive/${VERSION}.tar.gz -o
     && cd - \
     && rm -rf keystone-${VERSION}*
 
-# Copy keystone config file
 COPY keystone.conf /etc/keystone/keystone.conf
+COPY keystone.sql /root/keystone.sql
 
 # Add bootstrap script and make it executable
 COPY bootstrap.sh /etc/bootstrap.sh

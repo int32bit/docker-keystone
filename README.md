@@ -47,7 +47,7 @@ The following environment variables should be change according to your practice.
 * `-e MYSQL\_ROOT\_PASSWORD=...`: Defaults to the value of the `MYSQL\_ROOT\_PASSWORD` environment variable from the linked mysql container.
 * `-e MYSQL\_HOST=...`: If you use an external database, specify the address of the database. Defautls to "mysql".
 
-It may takes seconds to do some initial work, you can use `docker logs` to detect the progress. Once the Openstck Keystone Service is started, you can check its work as follows:
+It may takes seconds to do some initial work, you can use `docker logs` to detect the progress. Once the Openstck Keystone Service is started, you can verify operation of the Identity service as follows:
 
 ```
 docker exec -t -i keystone bash
