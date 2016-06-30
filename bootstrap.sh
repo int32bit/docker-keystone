@@ -15,7 +15,7 @@ OS_IDENTITY_API_VERSION=3
 CONFIG_FILE=/etc/keystone/keystone.conf
 SQL_SCRIPT=${SQL_SCRIPT:-/root/keystone.sql}
 
-if env | grep -qi MYSQL && test -e $SQL_SCRIPT; then
+if env | grep -qi MYSQL_ROOT_PASSWORD && test -e $SQL_SCRIPT; then
     MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$MYSQL_ENV_MYSQL_ROOT_PASSWORD}
     MYSQL_HOST=${MYSQL_HOST:-mysql}
     sed -i "s#^connection.*=.*#connection = mysql://keystone:KEYSTONE_DBPASS@${MYSQL_HOST}/keystone#" $CONFIG_FILE
