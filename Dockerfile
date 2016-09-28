@@ -28,3 +28,7 @@ RUN chown root:root /etc/bootstrap.sh && chmod a+x /etc/bootstrap.sh
 
 ENTRYPOINT ["/etc/bootstrap.sh"]
 EXPOSE 5000 35357
+
+HEALTHCHECK --interval=10s --timeout=5s \
+  CMD curl -f http://localhost:5000/v3 2> /dev/null || exit 1; \
+  curl -f http://localhost:35357/v3 2> /dev/null || exit 1; \
