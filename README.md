@@ -30,7 +30,7 @@ make clean
 
 ## How to use this image
 
-Openstack Keystone Service uses an SQL database(default sqlite) to store data. The official recommends use MariaDB or MySQL.
+Openstack Keystone Service uses an SQL database (default sqlite) to store data. The official documentation recommends use MariaDB or MySQL.
 
 ```bash
 docker run -d -e MYSQL_ROOT_PASSWORD=MYSQL_DBPASS -h mysql --name some-mysql -d mariadb
@@ -44,8 +44,8 @@ docker run --name some-keystone --hostname controller -e ADMIN_PASSWORD=nomorese
 
 The following environment variables should be change according to your practice.
 
-* `-e MYSQL\_ROOT\_PASSWORD=...`: Defaults to the value of the `MYSQL\_ROOT\_PASSWORD` environment variable from the linked mysql container.
-* `-e MYSQL\_HOST=...`: If you use an external database, specify the address of the database. Defautls to "mysql".
+* `-e MYSQL_ROOT_PASSWORD=...`: Defaults to the value of the `MYSQL\_ROOT\_PASSWORD` environment variable from the linked mysql container.
+* `-e MYSQL_HOST=...`: If you use an external database, specify the address of the database. Defautls to "mysql".
 
 It may takes seconds to do some initial work, you can use `docker logs` to detect the progress. Once the Openstck Keystone Service is started, you can verify operation of the Identity service as follows:
 
@@ -53,15 +53,17 @@ It may takes seconds to do some initial work, you can use `docker logs` to detec
 docker exec -t -i keystone bash
 cd /root
 source openrc
+openstack token issue
 openstack user list
+openstack project list
 ```
 
 ## Environment Variables
 
 Before you create a Keystone Service, you can adjust the additional configuration of the Openstack Keystone Service by passing one or more environment variables on the docker run command line. 
 
-* `ADMIN\_TOKEN`: defaults to "ADMIN\_TOKEN"
-* `-e ADMIN\_TENANT\_NAME=...`: Defaults to "admin".
-* `-e ADMIN\_USER\_NAME=...`: Defaults to "admin".
-* `-e ADMIN\_PASSWORD=...`: Defaults to "ADMIN\_PASS".
-* `-e ADMIN\_EMAIL=...`: Defaults to "admin@example.com".
+* `-e ADMIN_TOKEN`: defaults to "ADMIN\_TOKEN"
+* `-e ADMIN_TENANT_NAME=...`: Defaults to "admin".
+* `-e ADMIN_USER_NAME=...`: Defaults to "admin".
+* `-e ADMIN_PASSWORD=...`: Defaults to "ADMIN\_PASS".
+* `-e ADMIN_EMAIL=...`: Defaults to "admin@example.com".
