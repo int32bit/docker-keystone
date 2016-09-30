@@ -28,6 +28,12 @@ You can use `make log` to track log and `make exec` to enter instance context us
 make clean
 ```
 
+## Quick Start Using Docker Compose
+
+If you want to use docker-compose you can simply run:
+
+```docker-compose up -d```
+
 ## How to use this image
 
 Openstack Keystone Service uses an SQL database (default sqlite) to store data. The official documentation recommends use MariaDB or MySQL.
